@@ -9,10 +9,7 @@ install:
   - sudo apt-get --yes install qt5-default qttools5-dev-tools qtscript5-dev
   - sudo apt-get --yes install libxtst-dev libprocps3-dev
 
-script: travis_wait 60
-  - qmake -version
-  - qmake -r ugene.pro CONFIG+=x64
-  - make -j 2 >build.log 2>&1
+script: travis_wait 60 qmake -version && qmake -r ugene.pro CONFIG+=x64 && make -j 2 >build.log 2>&1
 
 after_failure:
   - tail 50 build.log
