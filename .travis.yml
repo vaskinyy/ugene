@@ -2,12 +2,11 @@ language: cpp
 dist: trusty
 os:
 - linux
-- osx
 install:
   - sudo apt-get update -qq
-  - sudo apt-get install qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev libqt5svg5-dev
-  - sudo apt-get install qt5-default qttools5-dev-tools qtscript5-dev
-  - sudo apt-get install libxtst-dev libproc-dev
+  - sudo apt-get --yes install qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev libsqlite3-dev libqt5svg5-dev
+  - sudo apt-get --yes install qt5-default qttools5-dev-tools qtscript5-dev
+  - sudo apt-get --yes install libxtst-dev libproc-dev
 
 script:
   - qmake ugene.pro CONFIG+=x64
