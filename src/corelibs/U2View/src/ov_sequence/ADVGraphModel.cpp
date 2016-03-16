@@ -945,7 +945,7 @@ void GraphPointsUpdater::updateGraphData() {
 
 QVector<float> GraphPointsUpdater::getCutoffRegion(int regionStart, int regionEnd) {
     int firstPointIndex = regionStart / wdata.step;
-    int lastPointIndex = qMin(regionEnd / wdata.step + 1, (qint64)result.allCutoffPoints.length());
+    int lastPointIndex = qMin(regionEnd / wdata.step + 1, (qint64)result.allCutoffPoints.size());
 
     return result.allCutoffPoints.mid(firstPointIndex, lastPointIndex - firstPointIndex);
 }
