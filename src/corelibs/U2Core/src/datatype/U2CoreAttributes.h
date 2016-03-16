@@ -23,6 +23,7 @@
 #define _U2_CORE_ATTRIBUTES_H_
 
 #include <U2Core/global.h>
+#include <QStringList>
 
 namespace U2 {
 
