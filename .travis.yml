@@ -9,5 +9,6 @@ install:
   - sudo apt-get --yes install libxtst-dev libprocps3-dev
 
 script:
+  - qmake -version
   - qmake ugene.pro CONFIG+=x64
   - make -j 2
