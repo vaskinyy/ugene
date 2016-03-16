@@ -11,7 +11,7 @@ install:
 
 script:
   - qmake -version
-  - qmake ugene.pro CONFIG+=x64
+  - qmake -r ugene.pro CONFIG+=x64
   - travis_wait 60 make -j 2 >build.log 2>&1
 
 after_failure:
