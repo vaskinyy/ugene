@@ -400,7 +400,7 @@ MuscleContext::MuscleContext(int _nThreads)
 } 
 
 void MuscleContext::fillUidsVectors(int rowsCount) {
-    const int initialRowsCount = input_uIds.length();
+    const int initialRowsCount = input_uIds.size();
     tmp_uIds.reserve(initialRowsCount + rowsCount);
     input_uIds.reserve(initialRowsCount + rowsCount);
     for (unsigned i = initialRowsCount; i < initialRowsCount + rowsCount; i++) {
