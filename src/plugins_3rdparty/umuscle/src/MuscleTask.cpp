@@ -174,7 +174,7 @@ void MuscleTask::doAlign(bool refine) {
         QVector<unsigned int> ids(maxSeq, 0);
         QVector<bool> existID(maxSeq, false);
         for (int i = 0; i < resNSeq; i++) {
-            ids[i] = ctx->output_uIds.length() > i ? ctx->output_uIds[i] : i;
+            ids[i] = ctx->output_uIds.size() > i ? ctx->output_uIds[i] : i;
             existID[ids[i]] = true;
         }
         if(config.stableMode) {
