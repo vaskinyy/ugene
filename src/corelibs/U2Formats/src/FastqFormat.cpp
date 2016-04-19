@@ -213,7 +213,7 @@ static void readQuality(U2OpStatus& os, IOAdapter *io, QByteArray &sequence, int
 }
 
 #define SKIPPED_LINES_ERRORS_LIMIT 50
-static bool error_logging_break(U2OpStatus& os, QMap<QString, QString>& skippedLines, const QString& seqName){
+static bool errorLoggingBreak(U2OpStatus& os, QMap<QString, QString>& skippedLines, const QString& seqName){
     if (os.isCoR()){
         if (skippedLines.size() < SKIPPED_LINES_ERRORS_LIMIT){
             skippedLines.insert(seqName, os.getError());
@@ -266,7 +266,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
             break;
         }
 
-        if(error_logging_break(warningOs, skippedLines, sequenceName)){
+        if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
             continue;
         }
 
@@ -282,7 +282,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
                 uniqueNames.insert(objName);
             }
             seqImporter.startSequence(dbiRef, folder, objName, false, warningOs);
-            if(error_logging_break(warningOs, skippedLines, sequenceName)){
+            if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
                 U2OpStatusImpl seqOs;
                 U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
                 continue;
@@ -294,7 +294,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
             seqImporter.addDefaultSymbolsBlock(gapSize, warningOs);
             sequenceStart += sequence.length();
             sequenceStart+=gapSize;
-            if(error_logging_break(warningOs, skippedLines, sequenceName)){
+            if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
                 U2OpStatusImpl seqOs;
                 U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
                 continue;
@@ -303,7 +303,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
 
         sequence.clear();
         readSequence(warningOs, io, sequence);
-        if(error_logging_break(warningOs, skippedLines, sequenceName)){
+        if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
             U2OpStatusImpl seqOs;
             U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
             continue;
@@ -313,7 +313,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
         Q_UNUSED(lSequence);
 
         seqImporter.addBlock(sequence.data(),sequence.length(), warningOs);
-        if(error_logging_break(warningOs, skippedLines, sequenceName)){
+        if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
             U2OpStatusImpl seqOs;
             U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
             continue;
@@ -325,7 +325,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
             if (sequenceName != qualSequenceName){
                 warningOs.setError(err.arg(sequenceName).arg(qualSequenceName));
             }
-            if(error_logging_break(warningOs, skippedLines, sequenceName)){
+            if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
                 U2OpStatusImpl seqOs;
                 U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
                 continue;
@@ -335,7 +335,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
         // read qualities
         qualityScores.clear();
         readQuality(warningOs, io, qualityScores, sequence.size());
-        if(error_logging_break(warningOs, skippedLines, sequenceName)){
+        if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
             U2OpStatusImpl seqOs;
             U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
             continue;
@@ -345,7 +345,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
         if(sequence.length() != qualityScores.length()){
             warningOs.setError(err);
         }
-        if(error_logging_break(warningOs, skippedLines, sequenceName)){
+        if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
             U2OpStatusImpl seqOs;
             U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(seqOs);
             continue;
@@ -368,7 +368,7 @@ static void load(IOAdapter* io, const U2DbiRef& dbiRef, const QVariantMap& hints
             }
 
             U2Sequence u2seq = seqImporter.finalizeSequenceAndValidate(warningOs);
-            if(error_logging_break(warningOs, skippedLines, sequenceName)){
+            if(errorLoggingBreak(warningOs, skippedLines, sequenceName)){
                 continue;
             }
             sequenceRef = GObjectReference(io->getURL().getURLString(), u2seq.visualName, GObjectTypes::SEQUENCE, U2EntityRef(dbiRef, u2seq.id));
@@ -419,14 +419,18 @@ Document* FastqFormat::loadDocument(IOAdapter* io, const U2DbiRef& dbiRef, const
     load(io, dbiRef, _hints, io->getURL(), objects, os, gapSize, predictedSize, lockReason, skippedLines);
     if (skippedLines.size() > 0){
         QMapIterator<QString, QString> i(skippedLines);
+        QList<QString> errors;
         while (i.hasNext()) {
             i.next();
             QString msg = i.key() + ": " + i.value();
             if (objects.length() > 0){
                 os.addWarning(msg);
             }else{
-                os.setError(msg);
+                errors.append(msg);
             }
+        }
+        if (errors.length() > 0){
+            os.setError(errors.join("\n"));
         }
     }
 
